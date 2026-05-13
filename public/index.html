@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Moody Player — AI Music by Emotion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- face-api.js CDN -->
+  <script defer src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+</head>
+<body>
+
+  <!-- Ambient background orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- ── HEADER ── -->
+  <header class="header">
+    <div class="logo">
+      <span class="logo-icon">◈</span>
+      <span class="logo-text">Moody<em>Player</em></span>
+    </div>
+    <nav class="nav-pills">
+      <button class="pill active" data-view="detect">Detect</button>
+      <button class="pill" data-view="library">Library</button>
+      <button class="pill" data-view="history">History</button>
+    </nav>
+  </header>
+
+  <!-- ── MAIN ── -->
+  <main>
+
+    <!-- ===== VIEW: DETECT ===== -->
+    <section id="view-detect" class="view active">
+
+      <div class="detect-layout">
+
+        <!-- Camera Panel -->
+        <div class="camera-panel">
+          <div class="camera-frame" id="camera-frame">
+            <video id="video" autoplay muted playsinline></video>
+            <canvas id="overlay-canvas"></canvas>
+
+            <!-- idle state -->
+            <div class="camera-idle" id="camera-idle">
+              <div class="idle-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M15 10l4.553-2.069A1 1 0 0121 8.87v6.26a1 1 0 01-1.447.894L15 14M3 8a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                </svg>
+              </div>
+              <p>Camera not started</p>
+            </div>
+
+            <!-- scanning overlay -->
+            <div class="scan-line" id="scan-line"></div>
+
+            <!-- emotion badge -->
+            <div class="emotion-badge" id="emotion-badge">
+              <span class="badge-emoji" id="badge-emoji">—</span>
+              <span class="badge-label" id="badge-label">Scanning…</span>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="camera-controls">
+            <button class="btn btn-primary" id="btn-start">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/><polygon points="10,8 16,12 10,16" fill="white"/></svg>
+              Start Camera
+            </button>
+            <button class="btn btn-ghost" id="btn-snap" disabled>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M20.94 13A9 9 0 1 1 11 3.06M22 7l-3-3-3 3"/></svg>
+              Detect Mood
+            </button>
+            <button class="btn btn-ghost" id="btn-stop" disabled>
+              <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+              Stop
+            </button>
+          </div>
+
+          <!-- Confidence meter -->
+          <div class="confidence-wrap" id="confidence-wrap" style="display:none">
+            <span class="conf-label">Confidence</span>
+            <div class="conf-bar-bg">
+              <div class="conf-bar" id="conf-bar"></div>
+            </div>
+            <span class="conf-pct" id="conf-pct">0%</span>
+          </div>
+        </div>
+
+        <!-- Songs Panel -->
+        <div class="songs-panel">
+          <div class="panel-header">
+            <div class="mood-display" id="mood-display">
+              <span class="mood-emoji" id="mood-emoji">🎵</span>
+              <div>
+                <p class="mood-hint">Your current vibe</p>
+                <h2 class="mood-name" id="mood-name">Awaiting detection…</h2>
+              </div>
+            </div>
+          </div>
+
+          <div class="songs-list" id="songs-list">
+            <!-- Placeholder cards -->
+            <div class="song-placeholder">
+              <div class="ph-cover"></div>
+              <div class="ph-info">
+                <div class="ph-line ph-long"></div>
+                <div class="ph-line ph-short"></div>
+              </div>
+            </div>
+            <div class="song-placeholder">
+              <div class="ph-cover"></div>
+              <div class="ph-info">
+                <div class="ph-line ph-long"></div>
+                <div class="ph-line ph-short"></div>
+              </div>
+            </div>
+            <div class="song-placeholder">
+              <div class="ph-cover"></div>
+              <div class="ph-info">
+                <div class="ph-line ph-long"></div>
+                <div class="ph-line ph-short"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="now-playing-bar" id="now-playing-bar" style="display:none">
+            <div class="np-info">
+              <span class="np-icon">♪</span>
+              <div>
+                <p class="np-title" id="np-title">—</p>
+                <p class="np-artist" id="np-artist">—</p>
+              </div>
+            </div>
+            <div class="np-controls">
+              <button class="np-btn" id="btn-prev">‹‹</button>
+              <button class="np-btn np-play" id="btn-play-pause">▶</button>
+              <button class="np-btn" id="btn-next">››</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== VIEW: LIBRARY ===== -->
+    <section id="view-library" class="view">
+      <div class="section-title-wrap">
+        <h2 class="section-title">Full Library</h2>
+        <div class="mood-filter-pills" id="mood-filter-pills">
+          <button class="mood-pill active" data-mood="all">All</button>
+          <button class="mood-pill" data-mood="happy">😄 Happy</button>
+          <button class="mood-pill" data-mood="sad">😢 Sad</button>
+          <button class="mood-pill" data-mood="angry">😠 Angry</button>
+          <button class="mood-pill" data-mood="surprised">😲 Surprised</button>
+          <button class="mood-pill" data-mood="neutral">😐 Neutral</button>
+          <button class="mood-pill" data-mood="fearful">😨 Fearful</button>
+          <button class="mood-pill" data-mood="disgusted">🤢 Disgusted</button>
+        </div>
+      </div>
+      <div class="library-grid" id="library-grid">
+        <div class="loading-spinner"><div class="spinner"></div><p>Loading songs…</p></div>
+      </div>
+    </section>
+
+    <!-- ===== VIEW: HISTORY ===== -->
+    <section id="view-history" class="view">
+      <div class="section-title-wrap">
+        <h2 class="section-title">Mood History</h2>
+        <p class="section-sub">Your recent emotion detections</p>
+      </div>
+      <div class="history-list" id="history-list">
+        <div class="loading-spinner"><div class="spinner"></div><p>Loading history…</p></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
