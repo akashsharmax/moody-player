@@ -233,8 +233,8 @@ Models used:
 ## 👨‍💻 Author
 
 **Akash Sharma**
-- GitHub: [@YOUR_USERNAME](https://github.com/YOUR_USERNAME)
-- LinkedIn: [linkedin.com/in/akash-sharma](https://linkedin.com/in/akash-sharma)
+- GitHub: [@YOUR_USERNAME](https://github.com/akashsharmax)
+- LinkedIn: [https://www.linkedin.com/in/akash-sharma-a7b96a245/)
 
 ---
 
